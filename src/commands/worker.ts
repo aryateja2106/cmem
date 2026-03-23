@@ -74,24 +74,27 @@ export function registerWorkerCommand(program: Command): void {
       }
     });
 
-  // start/stop/restart are pass-through notes — the worker is managed externally, not by cmem
   workerCmd
     .command('start')
-    .description('Start the memory worker (if installed)')
+    .description('Show how to start the memory worker')
     .action(() => {
-      outputSuccess(
-        'To start the worker, run: cmem worker start (refer to your memory worker docs)',
-        'human',
-      );
+      process.stdout.write(`cmem does not manage the worker process directly.\n\n`);
+      process.stdout.write(`If you use claude-mem, the worker starts automatically when you open a Claude Code session.\n`);
+      process.stdout.write(`You can also start it manually:\n\n`);
+      process.stdout.write(`  cd ~/.claude/plugins/marketplaces/thedotmack\n`);
+      process.stdout.write(`  node plugin/scripts/worker-service.cjs start\n\n`);
+      process.stdout.write(`Check status with: cmem worker status\n`);
     });
 
   workerCmd
     .command('stop')
-    .description('Stop the memory worker')
+    .description('Show how to stop the memory worker')
     .action(() => {
-      outputSuccess(
-        'To stop the worker, refer to your memory worker documentation.',
-        'human',
-      );
+      process.stdout.write(`cmem does not manage the worker process directly.\n\n`);
+      process.stdout.write(`If you use claude-mem:\n\n`);
+      process.stdout.write(`  cd ~/.claude/plugins/marketplaces/thedotmack\n`);
+      process.stdout.write(`  node plugin/scripts/worker-service.cjs stop\n\n`);
+      process.stdout.write(`Or find and kill the process:\n\n`);
+      process.stdout.write(`  lsof -i :37777\n`);
     });
 }
