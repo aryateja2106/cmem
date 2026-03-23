@@ -19,11 +19,23 @@ interface GetOpts {
   json?: boolean;
 }
 
+function parseJsonArray(value: string[] | string | undefined | null): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+  }
+  return [];
+}
+
 function sanitizeObservation(obs: Observation): Observation {
   return {
     ...obs,
     narrative: obs.narrative ? stripPrivateTags(obs.narrative) : obs.narrative,
-    facts: obs.facts ? obs.facts.map(stripPrivateTags) : obs.facts,
+    facts: parseJsonArray(obs.facts).map(stripPrivateTags),
+    concepts: parseJsonArray(obs.concepts),
+    files_read: parseJsonArray(obs.files_read),
+    files_modified: parseJsonArray(obs.files_modified),
   };
 }
 

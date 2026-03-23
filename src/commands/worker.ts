@@ -6,7 +6,7 @@
 import type { Command } from 'commander';
 import { loadConfig } from '../config.js';
 import { createMemoryClient } from '../client-factory.js';
-import { detectOutputMode, outputJSON, outputError, outputSuccess } from '../output.js';
+import { detectOutputMode, outputJSON, outputError } from '../output.js';
 import { CLIError, ExitCode } from '../errors.js';
 
 interface WorkerOpts {

@@ -8,6 +8,16 @@ import { getTypeIcon } from './icons.js';
 import type { SearchResult, TimelineItem, Observation, WorkerStats } from '../types.js';
 import { terminalWidth } from '../utils/detect.js';
 
+/** Safely coerce a field that may be a JSON string, array, or undefined into a string[]. */
+function safeArray(value: string[] | string | undefined | null): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+  }
+  return [];
+}
+
 function formatTimestamp(epoch: number): string {
   const d = new Date(epoch);
   const now = new Date();
@@ -105,16 +115,18 @@ export function renderObservations(observations: Observation[]): string {
       }
     }
 
-    if (obs.facts && obs.facts.length > 0) {
+    const facts = safeArray(obs.facts);
+    if (facts.length > 0) {
       lines.push('');
       lines.push(chalk.dim('  Facts:'));
-      for (const fact of obs.facts) {
+      for (const fact of facts) {
         lines.push(`    \u2022 ${fact}`);
       }
     }
 
-    if (obs.files_modified && obs.files_modified.length > 0) {
-      lines.push(chalk.dim(`  Files: ${obs.files_modified.join(', ')}`));
+    const files = safeArray(obs.files_modified);
+    if (files.length > 0) {
+      lines.push(chalk.dim(`  Files: ${files.join(', ')}`));
     }
 
     lines.push(chalk.dim('  ' + '\u2500'.repeat(Math.min(60, terminalWidth() - 4))));
