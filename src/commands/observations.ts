@@ -57,12 +57,13 @@ export function registerObservationsCommand(program: Command): void {
               process.stdout.write(`${icon} #${obs.id} ${obs.title}${project}\n`);
               process.stdout.write(`   ${time} | ${obs.type}\n`);
             }
-            process.stdout.write(
-              `\n${result.items.length} of ${result.total} (offset ${result.offset})\n`,
-            );
+            const countLabel = result.hasMore
+              ? `${result.items.length}+ results (more available)`
+              : `${result.items.length} results`;
+            process.stdout.write(`\n${countLabel}\n`);
             if (result.hasMore) {
               process.stdout.write(
-                `  Next: cmem observations --offset ${result.offset + result.limit}\n`,
+                `  Next: cmem observations --offset ${(result.offset ?? 0) + (result.limit ?? 20)}\n`,
               );
             }
           }
