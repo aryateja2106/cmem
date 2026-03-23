@@ -30,7 +30,7 @@ export function workerNotRunning(baseUrl: string): CLIError {
   return new CLIError(
     `Worker not running at ${baseUrl}`,
     ExitCode.CONNECTION_ERROR,
-    "The memory worker (claude-mem) must be running. Check 'cmem worker status' for details.",
+    "A context memory worker must be running on this port. Check 'cmem worker status' for details.",
   );
 }
 

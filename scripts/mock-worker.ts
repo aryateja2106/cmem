@@ -291,6 +291,66 @@ const server = Bun.serve({
       });
     }
 
+    // Root — serve a simple status page for browsers
+    if (path === '/' || path === '') {
+      const html = `<!DOCTYPE html>
+<html><head><title>cmem — Context Memory Worker</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; color: #1a1a1a; background: #fafafa; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .subtitle { color: #666; margin-bottom: 32px; }
+  .stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+  .label { color: #666; }
+  .value { font-weight: 600; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  .section { margin-top: 24px; }
+  h2 { font-size: 16px; color: #333; margin-bottom: 12px; }
+  .endpoints { font-size: 13px; color: #555; }
+  .endpoints a { color: #0066cc; text-decoration: none; }
+  .endpoints a:hover { text-decoration: underline; }
+  .badge { display: inline-block; background: #22c55e; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+</style></head>
+<body>
+  <h1>cmem <span class="badge">mock</span></h1>
+  <div class="subtitle">Context Memory Worker — serving on port ${PORT}</div>
+
+  <div class="stat"><span class="label">Status</span><span class="value" style="color:#22c55e">Running</span></div>
+  <div class="stat"><span class="label">Observations</span><span class="value">${MOCK_OBSERVATIONS.length}</span></div>
+  <div class="stat"><span class="label">Sessions</span><span class="value">${MOCK_SUMMARIES.length}</span></div>
+  <div class="stat"><span class="label">Projects</span><span class="value">${[...new Set(MOCK_OBSERVATIONS.map(o => o.project))].join(', ')}</span></div>
+
+  <div class="section">
+    <h2>Try from the terminal</h2>
+    <div class="endpoints">
+      <code>cmem stats</code> — worker statistics<br>
+      <code>cmem search "architecture"</code> — search observations<br>
+      <code>cmem get 1 2 3</code> — fetch full details<br>
+      <code>cmem stream</code> — live observation feed<br>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>API endpoints</h2>
+    <div class="endpoints">
+      <a href="/health">/health</a> ·
+      <a href="/api/stats">/api/stats</a> ·
+      <a href="/api/projects">/api/projects</a> ·
+      <a href="/api/search?query=architecture">/api/search?query=architecture</a> ·
+      <a href="/api/observations">/api/observations</a> ·
+      <a href="/api/decisions">/api/decisions</a> ·
+      <a href="/api/settings">/api/settings</a> ·
+      <a href="/stream">/stream</a> (SSE)
+    </div>
+  </div>
+
+  <div class="section" style="margin-top: 32px; font-size: 12px; color: #999;">
+    cmem-cli v0.1.0 — Context Memory CLI<br>
+    <a href="https://github.com/aryateja2106/cmem" style="color: #999;">github.com/aryateja2106/cmem</a>
+  </div>
+</body></html>`;
+      return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
     return Response.json({ error: 'Not found', path }, { status: 404, headers });
   },
 });
